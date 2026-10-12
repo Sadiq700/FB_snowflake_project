@@ -16,8 +16,8 @@ create or replace storage integration fb_adls_integration
     enabled = true
     azure_tenant_id = '5f1ac4d8-9506-4afa-bde6-312c800a6d32'
     storage_allowed_locations = (
-    'azure://fbprojectadls.blob.core.windows.net/supply-chain-raw-dev/',
-        'azure://fbprojectadls.blob.core.windows.net/supply-chain-raw-prod/'
+         'azure://fbprojectadls.blob.core.windows.net/supply-chain-raw-dev/',
+     'azure://fbprojectadls.blob.core.windows.net/supply-chain-raw-prod/'
     );
 desc integration fb_adls_integration;
 

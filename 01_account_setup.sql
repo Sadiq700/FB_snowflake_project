@@ -97,3 +97,5 @@ grant all privileges on all schemas
 show databases like 'fb_%';
 show warehouses like 'fb_%';
 show resource monitors;
+
+desc resource monitor fb_pipeline_rm;
