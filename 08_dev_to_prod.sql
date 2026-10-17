@@ -796,7 +796,7 @@ show resource monitors like 'fb_pipeline_rm';
 use role accountadmin;
 
 alter resource monitor fb_pipeline_rm 
-    set credit_quota = 50;
+    set credit_quota = 70;
 
 alter warehouse fb_pipeline_wh resume;
 */
