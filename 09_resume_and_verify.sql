@@ -19,10 +19,10 @@ show alerts in database fb_prod_db;
 
 --4. Recreate streams (invalidated by schema clone / table replace)
 use role sysadmin;
-create or replace stream fb_prod_db.silver_sch.raw_stream
+create or replace stream fb_prod_db.silver_sch.raw_orders_stream
     on table fb_prod_db.bronze_sch.raw_orders
     append_only = true
-    comment = 'Stream on raw_orders - captures new data for silver processing'
+    comment = 'Stream on raw_orders - captures new data for silver processing';
 
 
 -- 5. Resume Dynamic tables
@@ -56,3 +56,13 @@ select * from fb_prod_db.serving_sch.vw_inventory_level_turnover;
 select * from fb_prod_db.serving_sch.vw_orders_fulfillment;
 select * from fb_prod_db.serving_sch.vw_shipment_delays;
 select * from fb_prod_db.serving_sch.vw_supplier_performance;
+
+list @bronze_sch.adls_raw_stage_prod;
+
+show file formats in schema
+fb_prod_db.bronze_sch;
+ show streams in schema fb_prod_db.silver_sch;
+  select get_ddl( 
+    'procedure',
+    'fb_prod_db.silver_sch.silver_to_star()'
+  );
