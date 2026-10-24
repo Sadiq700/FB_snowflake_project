@@ -109,7 +109,7 @@ list @bronze_sch.adls_raw_stage_prod;
 
 show tables in database fb_prod_db;
 
-truncate table if exists raw_orders;
+truncate table if exists fb_prod_db.bronze_sch.raw_orders;
 truncate table if exists fb_prod_db.silver_sch.stg_orders;
 truncate table if exists FB_PROD_DB.SILVER_SCH.FACT_ORDERS;
 truncate table if exists fb_prod_db.silver_sch.dim_customer;
@@ -130,18 +130,20 @@ alter dynamic table fb_prod_db.gold_sch.supplier_performance refresh;
 select * from fb_prod_db.gold_sch.agg_order_fulfillment;
 
 -- Create PROD Snowpipe
-create pipe if not exists bronze_sch.supply_chain_pipe_prod
+create or replace pipe bronze_sch.supply_chain_pipe_prod
     auto_ingest = true
     integration = fb_azure_notifications_int
     comment = 'Snowpipe - auto ingest json file from ADLS Gen2'
 as
     copy into fb_prod_db.bronze_sch.raw_orders (
         raw_data,
+        ingested_at,
         file_name,
         file_row_number
     )
 from (
     select $1,
+            current_timestamp(),
             metadata$filename,
             metadata$file_row_number
     from @fb_prod_db.bronze_sch.adls_raw_stage_prod
@@ -151,6 +153,11 @@ from (
 
 select system$pipe_status('fb_prod_db.bronze_sch.supply_chain_pipe_prod');
 
+select get_ddl(
+    'pipe',
+    'fb_prod_db.bronze_sch.supply_chain_pipe_prod'
+);
+alter pipe fb_prod_db.bronze_sch.supply_chain_pipe_prod refresh;
 -- =====================================================================
 -- Step 5 - Recreate STREAMS for PROD
 -- Purpose : Cloned Stream have no accessible unconsumed records
@@ -746,6 +753,7 @@ alter share fb_prod_share
 
 -- Step 1: Call procedures to populate tables
 grant ownership on stream fb_prod_db.silver_sch.raw_orders_stream to role sysadmin copy current grants;
+grant ownership on stream fb_prod_db.silver_sch.stg_orders_stream to role sysadmin copy current grants;
 
 use role sysadmin;
 
@@ -779,7 +787,14 @@ union all  select 'agg_shipment_delays', count(*) from fb_prod_db.gold_sch.agg_s
 union all  select 'supplier_performance', count(*) from fb_prod_db.gold_sch.supplier_performance;
 
 
+show streams in schema fb_prod_db.silver_sch;
 
+describe stream fb_prod_db.silver_sch.raw_orders_stream;
+
+select get_ddl(
+    'procedure',
+    'fb_prod_db.silver_sch.silver_to_star()'
+    );
 
 -- =======================================================================
 
@@ -796,11 +811,14 @@ show resource monitors like 'fb_pipeline_rm';
 use role accountadmin;
 
 alter resource monitor fb_pipeline_rm 
-    set credit_quota = 50;
+    set credit_quota = 80;
 
 alter warehouse fb_pipeline_wh resume;
 */
 
 select count(*) from serving_sch.vw_inventory_level_turnover;
 
-
+alter warehouse fb_pipeline_wh 
+    set auto_suspend = 60
+    auto_resume = false;
+alter warehouse fb_pipeline_wh resume;

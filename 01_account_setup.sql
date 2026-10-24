@@ -76,7 +76,7 @@ create or replace resource monitor fb_analytics_rm
         on 90 percent do notify
         on 100 percent do suspend;
 --Assign moniters to warehouses
-alter warehouse fb_pipeline_wh to rol set resource_monitor = fb_pipeline_rm;
+alter warehouse fb_pipeline_wh  set resource_monitor = fb_pipeline_rm;
 alter warehouse fb_analytics_wh set resource_monitor = fb_analytics_rm;
 
 -- Grant privileges to sysadmin

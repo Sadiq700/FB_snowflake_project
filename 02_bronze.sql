@@ -108,7 +108,7 @@ create stage if not exists bronze_sch.adls_raw_stage
     file_format = bronze_sch.json_file_format
     comment = 'External stage - ADLS Gen2 DEV container';
 
-list @bronze_sch.adls_raw_stage
+list @bronze_sch.adls_raw_stage;
 
 --RAW_ORDERS TABLE
 --Transient - no fail-safe, cost efficient, reloadable
@@ -123,18 +123,20 @@ create or replace transient table bronze_sch.raw_orders(
 
 --SNOWPIPE
 --Auto-ingest triggered by Azure Event Grid on file arrival
-create pipe if not exists bronze_sch.supply_chain_pipe
+create or replace pipe bronze_sch.supply_chain_pipe
     auto_ingest = true
     integration = fb_azure_notifications_int
     comment = 'Snowpipe - auto ingest json file from ADLS Gen2'
 as
     copy into bronze_sch.raw_orders (
         raw_data,
+        ingested_at,
         file_name,
         file_row_number
     )
 from (
     select $1,
+            current_timestamp(),
             metadata$filename,
             metadata$file_row_number
     from @bronze_sch.adls_raw_stage
