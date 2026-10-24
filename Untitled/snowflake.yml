@@ -1,0 +1,33 @@
+definition_version: 2
+entities:
+  streamlit_app:
+    type: streamlit
+    meta:
+      use_mixins:
+        - streamlit_shared
+    identifier:
+      name: RYQIXCTAQQN_SSWU
+      database: FB_PROD_DB
+      schema: SERVING_SCH
+    title: FlowBridge Supply Chain Dashboard
+    query_warehouse: FB_ANALYTICS_WH
+    artifact_repositories:
+      - SNOWFLAKE.SNOWPARK.PYPI_SHARED_REPOSITORY
+  Target 1:
+    type: streamlit
+    meta:
+      use_mixins:
+        - streamlit_shared
+      role: ACCOUNTADMIN
+    identifier:
+      name: ''
+    title: Untitled
+    query_warehouse: COMPUTE_WH
+mixins:
+  streamlit_shared:
+    artifacts:
+      - pyproject.toml
+      - streamlit_app.py
+      - .streamlit/config.toml
+    compute_pool: SYSTEM_COMPUTE_POOL_CPU
+    main_file: streamlit_app.py
