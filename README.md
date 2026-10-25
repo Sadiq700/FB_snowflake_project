@@ -1,5 +1,7 @@
-# FlowBridge_snowflake_project
-Real-time supply chain analytics pipeline on Snowflake and Azure — Bronze to Gold medallion architecture, Snowpipe auto-ingestion, Streams, Tasks, Stored Procedures, Dynamic Tables, Secure Views, Streamlit dashboard, Pipeline Alerts, Data Sharing, Reader Account and zero-copy DEV to PROD promotion. Python + Faker simulates nested JSON source data.
+# FlowBridge-Snowflake-Project
+Real-time supply chain analytics pipeline on Snowflake and Azure — Bronze to Gold medallion architecture, Snowpipe auto-ingestion, Streams, Tasks, Stored Procedures, Dynamic Tables, Secure Views, Streamlit dashboard, Pipeline Alerts, Data Sharing, Reader Account and zero-copy DEV to PROD promotion. Python + Faker simulates nested JSON source data
+
+---
 
 This project demonstrates how to build a real-time end-to-end supply chain analytics pipeline from scratch using Snowflake, Azure and Python.
 
